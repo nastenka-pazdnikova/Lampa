@@ -3,18 +3,26 @@ from time import sleep
 
 def wait_for_number_of_claps(mic, claps_count, claps_delay):
 
-    while not mic.value():
-        sleep(0.0001)
+    for i in range(claps_count):
 
-    sleep(claps_delay)
+        wait_timeout = claps_delay
+        while wait_timeout > 0:
 
-    wait_timeout = claps_count * claps_delay
+            if mic.value():
+                break
 
-    while not mic.value() and wait_timeout > 0:
-        sleep(0.001)
-        wait_timeout = wait_timeout - 0.001
+            sleep(0.001)
+            wait_timeout = wait_timeout - 0.001
 
-    return wait_timeout > 0
+        if not wait_timeout > 0:
+            return False
+
+        print(f"cought clap {i + 1}")
+        sleep(claps_delay)
+
+    print(f"catch claps {claps_count}")
+
+    return True
 
 
 mic = Pin(10, Pin.IN, Pin.PULL_UP)
@@ -23,7 +31,7 @@ lampa = Pin(11, Pin.OUT)
 
 
 while True:
-    while not wait_for_number_of_claps(mic, 2, 0.2):
+    while not wait_for_number_of_claps(mic, 3, 0.2):
         pass
 
     lampa.high()
