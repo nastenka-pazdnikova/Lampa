@@ -56,6 +56,28 @@ mic = Pin(10, Pin.IN, Pin.PULL_UP)
 lampa = Pin(11, Pin.OUT)
 
 
+def detect_sequence_of_claps(mic, claps_delay):
+    while not mic.value():
+        sleep(0.001)
+
+    while True:
+        sleep(0.1)
+        delay_current = 0.1
+
+        while not mic.value():
+            sleep(0.001)
+            delay_current = delay_current + 0.001
+
+            if delay_current > 2:
+                return
+
+        print(delay_current)
+        claps_delay.append(delay_current)
+
+
+
+
+
 def exact_number_of_claps():
     while True:
         while not wait_for_number_of_claps(mic, 3, 0.2):
@@ -87,4 +109,14 @@ def dynamic_claps():
         sleep(0.5)
 
 
-dynamic_claps()
+def detect_claps():
+    while True:
+
+        claps = []
+
+        detect_sequence_of_claps(mic, claps)
+        print(f"cought {len(claps)} : {claps}")
+
+
+
+detect_claps()
